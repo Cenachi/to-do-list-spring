@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="1" author="carlos_cenachi">
+        <createTable tableName="user">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user_id"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+<!--        <addPrimaryKey tableName="user" columnNames="id" constraintName="pk_user_id"/>-->
+
+        <rollback>
+            <dropTable tableName="user"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="2" author="carlos_cenachi">
+        <createTable tableName="list">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_list_id"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+<!--        <addPrimaryKey tableName="list" columnNames="id" constraintName="pk_list_id"/>-->
+        <addForeignKeyConstraint
+                baseTableName="list" baseColumnNames="user_id"
+                referencedTableName="user" referencedColumnNames="id"
+                constraintName="fk_list_user_id"
+        />
+
+        <rollback>
+            <dropTable tableName="list"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3" author="carlos_cenachi">
+        <createTable tableName="item">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_item_id"/>
+            </column>
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="checked" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="list_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+<!--        <addPrimaryKey tableName="item" columnNames="id" constraintName="pk_item_id"/>-->
+        <addForeignKeyConstraint
+                baseTableName="item" baseColumnNames="list_id"
+                referencedTableName="list" referencedColumnNames="id"
+                constraintName="fk_item_list_id"
+        />
+
+        <rollback>
+            <dropTable tableName="item"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>
