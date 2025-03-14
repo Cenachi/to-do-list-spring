@@ -1,20 +1,23 @@
 package com.udemy.todolist.controller;
 
-import com.udemy.todolist.dto.UserDto;
+import com.udemy.todolist.dto.RegisterDTO;
+import com.udemy.todolist.entities.User;
+import com.udemy.todolist.repositories.UserRepository;
 import com.udemy.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
-@Controller
+@RestController
+@CrossOrigin(origins = "*")
 public class LoginController {
 
     @Autowired
     UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/register")
     public String getRegister() {
@@ -22,9 +25,22 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public String postRegister(@RequestParam Map<String, String> body) {
-        UserDto userDto = new UserDto(body.get("email"), body.get("password"), body.get("name"));
-        userService.register(userDto);
-        return "login";
+    public Map<String, String> postRegister(@RequestBody RegisterDTO registerDTO) {
+        Map<String, String> response = new HashMap<>();
+
+        if (userRepository.existsByEmail(registerDTO.getEmail())) {
+            response.put("status", "error");
+            return response;
+        }
+
+        User user = new User();
+        user.setName(registerDTO.getName());
+        user.setEmail(registerDTO.getEmail());
+        user.setPassword(registerDTO.getPassword());
+
+        userRepository.save(user);
+
+        response.put("status", "success");
+        return response;
     }
 }

@@ -1,6 +1,6 @@
 package com.udemy.todolist.services;
 
-import com.udemy.todolist.dto.UserDto;
+import com.udemy.todolist.dto.RegisterDTO;
 import com.udemy.todolist.entities.User;
 import com.udemy.todolist.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,13 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public User register(UserDto userDto) {
-        return userRepository.save(userDto.toUser());
+    public User register(RegisterDTO registerDTO) {
+
+        User user = new User();
+        user.setName(registerDTO.getName());
+        user.setEmail(registerDTO.getEmail());
+        user.setPassword(registerDTO.getPassword());
+
+        return userRepository.save(user);
     }
 }
