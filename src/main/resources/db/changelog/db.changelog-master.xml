@@ -80,4 +80,13 @@
             <dropTable tableName="item"/>
         </rollback>
     </changeSet>
+
+    <changeSet id="4" author="carlos_cenachi">
+        <addUniqueConstraint tableName="user" columnNames="email" constraintName="uc_user_email"/>
+
+        <rollback>
+        <dropUniqueConstraint tableName="user" constraintName="uc_user_email"/>
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>
