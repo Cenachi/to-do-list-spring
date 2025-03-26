@@ -5,6 +5,8 @@ import com.udemy.todolist.entities.User;
 import com.udemy.todolist.repositories.UserRepository;
 import com.udemy.todolist.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -16,8 +18,6 @@ public class LoginController {
 
     @Autowired
     UserService userService;
-    @Autowired
-    private UserRepository userRepository;
 
     @GetMapping("/register")
     public String getRegister() {
@@ -25,22 +25,13 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public Map<String, String> postRegister(@RequestBody RegisterDTO registerDTO) {
-        Map<String, String> response = new HashMap<>();
-
-        if (userRepository.existsByEmail(registerDTO.getEmail())) {
-            response.put("status", "error");
-            return response;
+    public ResponseEntity<?> registerUser(@RequestBody RegisterDTO registerDTO) {
+        try {
+            User user = userService.register(registerDTO);
+            //Response de created
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
-        User user = new User();
-        user.setName(registerDTO.getName());
-        user.setEmail(registerDTO.getEmail());
-        user.setPassword(registerDTO.getPassword());
-
-        userRepository.save(user);
-
-        response.put("status", "success");
-        return response;
     }
 }
